@@ -45,7 +45,7 @@ namespace :deploy do
   task :restart do
     on roles(:app) do
       within release_path do
-        execute 'test-command.sh'
+        execute './test-command.sh'
       end
     end
   end
