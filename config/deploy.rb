@@ -38,3 +38,15 @@ set :deploy_to,   "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
+
+after 'deploy:published', 'deploy:restart'
+
+namespace :deploy do
+  task :restart do
+    on roles(:app) do
+      within release_path do
+        execute 'test-command.sh'
+      end
+    end
+  end
+end
