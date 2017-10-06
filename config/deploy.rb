@@ -45,6 +45,7 @@ namespace :deploy do
   task :restart do
     on roles(:app) do
       within release_path do
+        # 注意，是 './test-command.sh'，不能是 'test-command.sh'
         execute './test-command.sh'
       end
     end
