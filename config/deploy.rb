@@ -1,14 +1,18 @@
 # config valid only for current version of Capistrano
 lock "3.9.0"
 
-set :application, "my_app_name"
-set :repo_url, "git@example.com:me/my_repo.git"
+# my-ec2 is already configured in ~/.ssh/config
+server "my-ec2", roles: [:web, :app, :db]
+set :user,        "ubuntu"
+
+set :application, "capistrano-study"
+set :repo_url,    "git@github.com:baurine/#{fetch(:application)}.git"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, "/var/www/my_app_name"
+set :deploy_to,   "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
