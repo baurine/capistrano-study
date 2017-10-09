@@ -4,7 +4,7 @@
 
 本项目展示了一个最简单的可成功部署的 Capistrano 的配置。
 
-前提条件，你需要一台服务器，本项目使用的是 EC2。
+前提条件，你需要一台自己的服务器，本例使用的是在 AWS 注册的 EC2。
 
 [config/deploy.rb](./config/deploy.rb) 的内容：
 

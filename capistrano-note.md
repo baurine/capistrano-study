@@ -4,10 +4,12 @@
 
 - [Capistrano](http://capistranorb.com/)
 - [Capistrano README](https://github.com/capistrano/capistrano/blob/master/README.md)
+- [自动化部署工具 Capistrano 与 Mina](http://blog.fir.im/cap_and_mina/)
+- [Rails 中自动布署工具 mina 的经验谈](http://yafeilee.me/blogs/82)
 
 Capistrano: A deployment automation tool built on Ruby, Rake, and SSH.
 
-Capistrano 是基于 Rake 并扩展了 Rake 的 DSL。
+简单地说，Capistrano 基于 Rake 并扩展了 Rake 的 DSL，通过 SSH 自动登录远程服务器并帮你执行各种脚本。
 
 ## Note 1
 
@@ -215,8 +217,12 @@ ask 的第二个参数是默认值，还有第三个参数 echo，如果 echo �
 1. 提交代码到部署服务器可访问的仓库
 1. 从仓库中移除敏感文件，比如 database.yml
 1. 使用 `cap install` 初始化 capinstrano 的配置
-1. 在 config/deploy/stage.rb 中配置服务器地址
+1. 在 config/deploy/stage.rb 中设置各 stage 不同的配置 (比如服务器地址，部署的分支名)
 1. 在 config/deploy.rb 中设置共享的配置
+
+如果各个 stage 使用相同的服务器，那么可以配置在 config/deploy.rb 中，否则，配置到各 stage 自己的 config/deploy/stage.rb 中。
+
+实际项目中，各 stage 应该是使用不同的服务器，或是同一名服务器上的不同域名。
 
 **配置 config/deploy/stage.rb**
 
@@ -233,11 +239,9 @@ ask 的第二个参数是默认值，还有第三个参数 echo，如果 echo �
 
 role 默认有三个：web，app，db。
 
-(还不是很明白 role 的作用。)
+[What exactly is a "role" in Capistrano?](https://stackoverflow.com/questions/1155218/what-exactly-is-a-role-in-capistrano)
 
-[What exactly is a “role” in Capistrano?](https://stackoverflow.com/questions/1155218/what-exactly-is-a-role-in-capistrano)
-
-明白了，role 是对服务器的分类，如果部署在多台服务器上才能体现出它的效果。假设有一个大项目，部署在多台服务器上，而且一些服务器部署的是数据库部分，数据库还分主从服务器，一些服务器部署的是代码部分。那么你就可以将这些运行数据库的服务器指定为 db role，将运行代码的服务器指定为 app role。然后你就可以指定一些 tasks，只在 db 服务器上执行，指定一些 tasks，只在 app 服务器上的执行，或是在全部类型的服务器上都执行。
+明白了，role 是对服务器的分类，如果部署在多台服务器上才能体现出它的效果。假设有一个大项目，部署在多台服务器上，一些服务器部署的是数据库部分，而且数据库还分主从服务器，一些服务器部署的是代码部分。那么你就可以将这些运行数据库的服务器指定为 db role，将运行代码的服务器指定为 app role。然后你就可以指定一些 tasks，只在 db 服务器上执行，指定一些 tasks，只在 app 服务器上的执行，或是在全部类型的服务器上都执行，甚至可以指定一些 tasks 不在任何远程服务器上执行，只在本地执行。
 
 本项目中，因为我们只有一台服务器，所以所有服务都跑在一台服务器上，包括代码和数据库，所以这台服务器的类型既是 app，又是 db。但是实际如果项目只有一台服务器上，完全可以不需要这么多 roles，任选一个就行了，因为没有什么意义。
 
@@ -378,7 +382,7 @@ execute() 方法，执行 shell 命令。文档里说 `execute(:bundle, :install
 
 [Local Tasks](http://capistranorb.com/documentation/getting-started/local-tasks/)
 
-(没太明白，local tasks 是干嘛用的，意思是只在本地执行的 task?)
+(我的理解，local task 是在本地执行的 task，并不会在任何远程服务器上执行，因为并没有给它指定任何 role。)
 
 前面的 task 用 `on roles(:all)` 指定在哪些远程服务器上执行，如果把这个语句替换成 `run_locally`，则意味着这个 task 只在本地执行，而不是在远程服务器上执行。(这样理解应该没错吧。)
 
